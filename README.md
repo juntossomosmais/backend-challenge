@@ -1,94 +1,93 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c16e9208-a4ce-459c-97e9-6a9f95b2f159" width="200" alt="Juntos Somos Mais">
+</p>
 
-# Code Challenge Juntos Somos+
+# &lt;backend-challenge /&gt;
 
-O objetivo desse code challenge é, mais do que seu currículo, formação e certificações, avaliarmos como você lida com esse desafio, quais ferramentas escolhe, a qualidade do seu código e a maneira de pensar nele.
+*[Leia em Português](./README.pt-BR.md)*
 
-A solução desse desafio é extremamente importante para entendermos os seus requisitos de qualidade, organização do seu código, performance, portabilidade, etc.
+The main objective of this challenge is to assess your approach to **problem-solving, code quality, and how you leverage modern tools** — including AI.
 
-O desafio deve ser feito em Python ou C#, de acordo com a vaga do processo seltivo. Sinta-se à vontade para escolher as ferramentas que achar necessário. Queremos ser surpreendidos pela sua abordagem no desafio!
+We evaluate:
 
-Temos apenas dois pré-requisitos: código testado e pronto para produção.
+- Your coding style and organization
+- Decision-making and trade-offs
+- Testing strategies
+- Documentation quality
+- How you use AI as a development tool
 
-Topa? 😁
+> 🤖 **AI is welcome here.** We don't want to know *if* you used AI. We want to know *how* you used it.
 
-# O desafio
+---
 
-Recebemos insumos de clientes via arquivo CSV das empresas participantes todo mês, contudo, recebemos de alguns no formato JSON.
+## Table of Contents
 
-Exemplo do CSV:
+- [The Challenge](#the-challenge)
+- [Business Rules](#business-rules)
+- [API Requirements](#api-requirements)
+- [Evaluation Criteria](#evaluation-criteria)
+- [AI Journey (Required)](#ai-journey-required)
+- [Submission](#submission)
+- [FAQ](#faq)
 
-```
-gender,name.title,name.first,name.last,location.street,location.city,location.state,location.postcode,location.coordinates.latitude,location.coordinates.longitude,location.timezone.offset,location.timezone.description,email,dob.date,dob.age,registered.date,registered.age,phone,cell,picture.large,picture.medium,picture.thumbnail
-male,mr,joselino,alves,2095 rua espirito santo ,são josé de ribamar,paraná,96895,-35.8687,-131.8801,-10:00,Hawaii,joselino.alves@example.com,1996-01-09T02:53:34Z,22,2014-02-09T19:19:32Z,4,(97) 0412-1519,(94) 6270-3362,https://randomuser.me/api/portraits/men/75.jpg,https://randomuser.me/api/portraits/med/men/75.jpg,https://randomuser.me/api/portraits/thumb/men/75.jpg
-```
-Exemplo do JSON:
+---
 
-```
-{"gender":"male","name":{"title":"mr","first":"antonelo","last":"da conceição"},"location":{"street":"8986 rua rui barbosa ","city":"santo andré","state":"alagoas","postcode":40751,"coordinates":{"latitude":"-69.8704","longitude":"-165.9545"},"timezone":{"offset":"+1:00","description":"Brussels, Copenhagen, Madrid, Paris"}},"email":"antonelo.daconceição@example.com","dob":{"date":"1956-02-12T10:38:37Z","age":62},"registered":{"date":"2005-12-05T15:22:53Z","age":13},"phone":"(85) 8747-8125","cell":"(87) 2414-0993","picture":{"large":"https://randomuser.me/api/portraits/men/8.jpg","medium":"https://randomuser.me/api/portraits/med/men/8.jpg","thumbnail":"https://randomuser.me/api/portraits/thumb/men/8.jpg"}}
-```
+## The Challenge
 
-Precisamos aplicar nossa regra de negócio a fim de casar com necessidades internas da Juntos Somos+.
+We receive customer data from partner companies in both **CSV** and **JSON** formats. Your task is to:
 
-## Regras de negócio que você precisa implementar
+1. **Load** data from external URLs at application startup
+2. **Transform** the data applying our business rules
+3. **Expose** a REST API to query the processed data
 
-Costumamos trabalhar com os **clientes pelas 5 regiões do país**: 
+### Input Data
 
-- Norte
-- Nordeste
-- Centro-Oeste
-- Sudeste
-- Sul
+| Format | URL | Records |
+|--------|-----|---------|
+| CSV | [input-backend.csv](https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.csv) | ~1000 |
+| JSON | [input-backend.json](https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.json) | ~1000 |
 
-Como a concentração de consultores nossos é mais forte em alguns pontos, dependendo da localidade do cliente pode ficar mais fácil nosso time atendê-lo. Considere os pontos abaixo **(bounding box) para classificá-lo de acordo com os rótulos**:
+> ⚠️ Data must be loaded via HTTP request **at startup** and kept **in memory**. No database required.
 
-- **ESPECIAL**
+---
 
-```
-minlon: -2.196998
-minlat -46.361899
-maxlon: -15.411580
-maxlat: -34.276938
-```
-```
-minlon: -19.766959
-minlat -52.997614
-maxlon: -23.966413
-maxlat: -44.428305
-```
+## Business Rules
 
-- **NORMAL**
+### 1. Customer Classification by Location
 
-```
-minlon: -26.155681
-minlat -54.777426
-maxlon: -34.016466
-maxlat: -46.603598
-```
+Based on coordinates, classify each customer:
 
-- **TRABALHOSO:** Qualquer outro usuário que não se encaixa nas regras acima.
+| Type | Bounding Box |
+|------|--------------|
+| **SPECIAL** | minlon: -2.196998, minlat: -46.361899, maxlon: -15.411580, maxlat: -34.276938 |
+| **SPECIAL** | minlon: -19.766959, minlat: -52.997614, maxlon: -23.966413, maxlat: -44.428305 |
+| **NORMAL** | minlon: -26.155681, minlat: -54.777426, maxlon: -34.016466, maxlat: -46.603598 |
+| **LABORIOUS** | Anyone not matching the above |
 
-Outro ponto é que temos intenção de expandir os serviços para outros países, então **quanto mais genérico o cadastro, melhor**. Infelizmente os registros CSVs e JSONs não estão 100% prontos. Para melhorá-los, precisamos:
+### 2. Data Transformations
 
-1. Transformar os contatos telefônicos no formato [E.164](https://en.wikipedia.org/wiki/E.164). Exemplo: (86) 8370-9831 vira +558683709831.
-2. Inserir a nacionalidade. Como todos os clientes ainda são do brasil, o valor padrão será BR.
-3. Alterar o valor do campo `gender` para `F` ou `M` em vez de `female` ou `male`.
-4. Retirar o campo `age` de `dob` e `registered`.
-5. Alterar estrutura para simplificar leitura e usar arrays em campos específicos (ver exemplo abaixo)
+| Field | Transformation |
+|-------|----------------|
+| `phone`, `cell` | Convert to [E.164](https://en.wikipedia.org/wiki/E.164) format. Example: `(86) 8370-9831` → `+558683709831` |
+| `gender` | `male` → `M`, `female` → `F` |
+| `dob.age`, `registered.age` | Remove these fields |
+| `nationality` | Add field with value `BR` |
+| `region` | Add based on state (Norte, Nordeste, Centro-Oeste, Sudeste, Sul) |
 
-Exemplo de contrato de OUTPUT:
+### 3. Output Contract
 
 ```json
 {
-  "type": "laborious"
-  "gender": "m",
+  "type": "laborious",
+  "gender": "M",
   "name": {
     "title": "mr",
     "first": "quirilo",
     "last": "nascimento"
   },
   "location": {
-    "region": "sul"
-    "street": "680 rua treze ",
+    "region": "sul",
+    "street": "680 rua treze",
     "city": "varginha",
     "state": "paraná",
     "postcode": 37260,
@@ -104,12 +103,8 @@ Exemplo de contrato de OUTPUT:
   "email": "quirilo.nascimento@example.com",
   "birthday": "1979-01-22T03:35:31Z",
   "registered": "2005-07-01T13:52:48Z",
-  "telephoneNumbers": [
-    "+556629637520"
-  ],
-  "mobileNumbers": [
-    "+553270684089"
-  ],
+  "telephoneNumbers": ["+556629637520"],
+  "mobileNumbers": ["+553270684089"],
   "picture": {
     "large": "https://randomuser.me/api/portraits/men/83.jpg",
     "medium": "https://randomuser.me/api/portraits/med/men/83.jpg",
@@ -117,56 +112,260 @@ Exemplo de contrato de OUTPUT:
   },
   "nationality": "BR"
 }
-
 ```
 
-## Faça uma API
+---
 
-Pense em uma API que dada a **região do usuário** e seu **tipo de classificação**, responda a **listagem dos elegíveis**. Não existe routing definido para a aplicação, fica a seu gosto.
+## API Requirements
 
-É **obrigatório** trabalhar com toda manipulação dos dados **em memória**. O carregamento dos dados de input deve ser por meio de request HTTP **ao subir a sua aplicação**, ou seja, antes do seu App estar `ready`, você fará um request para os links fornecidos abaixo.
-
-Além da lista dos usuários elegíveis, para permitir navegação entre os registros, **deve ser implementado** os seguintes metadados de paginação:
+### Endpoint
 
 ```
-  {
-    pageNumber: X,
-    pageSize: P,
-    totalCount: T,
-    users: [
-      ...
-    ]
-  }
+GET /users
 ```
 
-Imagine que essa API possa ser acessada por consumidores específicos, então coloque o que mais achar necessário.
+### Query Parameters
 
-Use como input os links abaixo (~1000 registros cada):
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `region` | string | Filter by region (norte, nordeste, centro-oeste, sudeste, sul) |
+| `type` | string | Filter by classification (special, normal, laborious) |
+| `pageNumber` | int | Page number (1-indexed) |
+| `pageSize` | int | Items per page |
 
-- https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.csv
-- https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.json
+### Response
 
-## Validação
+```json
+{
+  "pageNumber": 1,
+  "pageSize": 10,
+  "totalCount": 2000,
+  "users": [...]
+}
+```
 
-O arquivo [validate.sh](./validate.sh) contém um teste mínimo da chamada da API. O teste só será avaliado se a API for validada corretamente com esse script.
+### Validation
 
+Your API must pass our validation script:
 
-# Como entregar
+```bash
+./validate.sh
+```
 
-Você deve disponibilizar seu código em seu repositório do Github e manter o repositório como privado.
+This checks:
+- Endpoint responding at `localhost:8080`
+- Pagination fields present
+- Total count of 2000 records
 
-É obrigatório ter um **README** com todas as instruções sobre o seu desafio.
+---
 
-Assim que finalizar, nos avise pelo e-mail vagas-dev@juntossomosmais.com.br com:
+## Evaluation Criteria
 
-- Assunto: [Back-end Developer] Seu Nome;
-- Link do repositório para testes
-- Informações sobre você: Github, LinkedIn e o que mais achar relevante.
+We assess your submission across **7 competencies**. There are no "levels" to choose — just deliver your best work, and we'll evaluate where you stand.
 
-Em seguida enviaremos o(s) usuário(s) do github que você deve liberar acesso ao código.
+### 1. 🎯 Problem Solving
 
-O prazo para envio é de 7 dias, mas se precisar de mais tempo é só nos avisar 😊
+| What we look for |
+|------------------|
+| Correct implementation of all business rules |
+| Edge cases handling (invalid data, missing fields, malformed input) |
+| Logical and efficient approach to data transformation |
 
-## Outros desafios
+### 2. 🏗️ Code Architecture
 
-Se a sua vaga for específica para front-end, veja [este outro desafio](https://github.com/juntossomosmais/frontend-challenge).
+| What we look for |
+|------------------|
+| Clear separation of concerns |
+| Consistent project structure |
+| Appropriate use of design patterns (when they add value, not for show) |
+| Code that's easy to navigate and understand |
+
+### 3. ✨ Code Quality
+
+| What we look for |
+|------------------|
+| Readability over cleverness |
+| Meaningful naming conventions |
+| Consistent style throughout |
+| No unnecessary complexity |
+| Proper error handling |
+
+### 4. 🧪 Testing
+
+| What we look for |
+|------------------|
+| Tests that document behavior |
+| Coverage of critical paths |
+| Tests that would catch real bugs |
+| Balance between unit and integration tests |
+
+### 5. 📚 Documentation
+
+| What we look for |
+|------------------|
+| Clear README with setup instructions |
+| API documentation (any format) |
+| Comments where code isn't self-explanatory |
+| Architecture decisions explained (when relevant) |
+
+### 6. 🚀 Production Readiness
+
+| What we look for |
+|------------------|
+| Containerization (Docker) |
+| Environment configuration |
+| Health checks |
+| Logging strategy |
+| CI/CD awareness |
+
+### 7. 🤖 AI Collaboration
+
+| What we look for |
+|------------------|
+| Transparency in AI usage |
+| Critical thinking about AI-generated code |
+| Iteration and refinement over copy-paste |
+| Understanding of what the AI produced |
+
+---
+
+## AI Journey (Required)
+
+Create an `/ai-journey` folder in your repository documenting how you used AI tools.
+
+### Required Files
+
+```
+📁 ai-journey/
+├── README.md          # Summary of your AI usage
+├── prompts.md         # Key prompts you used
+└── learnings.md       # What you learned in the process
+```
+
+### What to Document
+
+**prompts.md** — Don't document everything, just the interesting parts:
+
+```markdown
+## Prompt: Phone number regex
+**Tool:** ChatGPT-4
+
+**What I asked:**
+"Create a regex to convert Brazilian phone numbers to E.164 format"
+
+**What happened:**
+Initial regex didn't handle 9-digit mobile numbers. I had to...
+
+**Final solution:**
+[your code]
+```
+
+**learnings.md** — Reflect on the experience:
+
+```markdown
+## What worked well
+- AI was great for boilerplate code
+- Helped me explore libraries I wasn't familiar with
+
+## What didn't work
+- Initial architecture suggestion was over-engineered
+- Had to simplify after understanding the actual requirements
+
+## What I'd do differently
+- Start with clearer requirements in prompts
+- Ask for simpler solutions first
+```
+
+### If You Don't Use AI
+
+That's fine! Document your process anyway:
+- What resources did you consult?
+- How did you approach problems?
+- What was your decision-making process?
+
+---
+
+## Submission
+
+### Languages
+
+**Python** or **C#** — choose the one you're most comfortable with.
+
+### Repository Structure
+
+```
+📁 your-repo/
+├── src/                  # Source code
+├── tests/                # Tests
+├── ai-journey/           # AI documentation (required)
+├── docker-compose.yml    # If applicable
+└── README.md             # Setup instructions
+```
+
+### How to Submit
+
+1. Create a **public** GitHub repository
+2. Open an **Issue** in this repository with:
+   - Title: `[Backend] Your Name`
+   - Link to your repository
+   - Brief description of your approach
+   - Anything you'd like us to know
+
+### Timeline
+
+- **Recommended:** 7 days
+- **Need more time?** Just let us know in the issue
+
+---
+
+## FAQ
+
+<details>
+<summary><b>What languages can I use?</b></summary>
+
+Python or C#. Choose the one you're most comfortable with.
+</details>
+
+<details>
+<summary><b>Are there open positions?</b></summary>
+
+Not always, but we maintain a talent pool. Great submissions stay on our radar for future opportunities.
+</details>
+
+<details>
+<summary><b>What if I can only complete part of the challenge?</b></summary>
+
+Submit what you have! Partial submissions with quality code tell us more than complete submissions with poor code. Just document what's missing and why.
+</details>
+
+<details>
+<summary><b>Should I include extra features?</b></summary>
+
+Only if they add clear value and don't compromise the core requirements. We prefer well-executed basics over half-finished extras.
+</details>
+
+<details>
+<summary><b>How will I know my seniority level?</b></summary>
+
+We don't ask you to self-declare a level. We evaluate your submission across all criteria and determine fit based on our internal standards.
+</details>
+
+---
+
+## Other Challenges
+
+If you're applying for a front-end position, check out our [frontend-challenge](https://github.com/juntossomosmais/frontend-challenge).
+
+---
+
+## Questions?
+
+Open an [issue](../../issues) or reach out to **vagas-dev@juntossomosmais.com.br**.
+
+Before asking, please check if your question was already answered in [previous issues](../../issues?q=is%3Aissue).
+
+---
+
+<p align="center">
+  <sub>Made with 💛 by the Engineering Team at <a href="https://juntossomosmais.com.br">Juntos Somos Mais</a></sub>
+</p>

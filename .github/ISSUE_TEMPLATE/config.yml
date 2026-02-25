@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions about the challenge
+    url: https://github.com/juntossomosmais/code-challenge/discussions
+    about: For questions about the challenge, please use Discussions instead of Issues
+  - name: Frontend Challenge
+    url: https://github.com/juntossomosmais/frontend-challenge
+    about: Looking for the frontend challenge? Click here
