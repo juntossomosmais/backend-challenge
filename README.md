@@ -276,13 +276,6 @@ Initial regex didn't handle 9-digit mobile numbers. I had to...
 - Ask for simpler solutions first
 ```
 
-### If You Don't Use AI
-
-That's fine! Document your process anyway:
-- What resources did you consult?
-- How did you approach problems?
-- What was your decision-making process?
-
 ---
 
 ## Submission

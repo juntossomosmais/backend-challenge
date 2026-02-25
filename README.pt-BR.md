@@ -276,13 +276,6 @@ Regex inicial não tratava celulares com 9 dígitos. Eu tive que...
 - Pedir soluções mais simples primeiro
 ```
 
-### Se Você Não Usar IA
-
-Tudo bem! Documente seu processo mesmo assim:
-- Quais recursos você consultou?
-- Como você abordou os problemas?
-- Qual foi seu processo de tomada de decisão?
-
 ---
 
 ## Entrega
