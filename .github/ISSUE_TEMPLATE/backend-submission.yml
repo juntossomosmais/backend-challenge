@@ -100,10 +100,20 @@ body:
   - type: input
     id: linkedin
     attributes:
-      label: LinkedIn (optional)
+      label: LinkedIn
+      description: "Your LinkedIn profile URL"
       placeholder: "https://linkedin.com/in/johndoe"
     validations:
-      required: false
+      required: true
+
+  - type: input
+    id: github-profile
+    attributes:
+      label: GitHub Profile
+      description: "Your GitHub profile URL (not the challenge repo)"
+      placeholder: "https://github.com/johndoe"
+    validations:
+      required: true
 
   - type: input
     id: time-spent
