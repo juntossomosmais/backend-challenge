@@ -2,79 +2,147 @@
   <img src="https://github.com/user-attachments/assets/c16e9208-a4ce-459c-97e9-6a9f95b2f159" width="200" alt="Juntos Somos Mais">
 </p>
 
-# &lt;backend-challenge /&gt;
+<h1 align="center">&lt;backend-challenge /&gt;</h1>
 
-*[Leia em Português](./README.pt-BR.md)*
+<p align="center">
+  <strong>Build a REST API • Transform Data • Document Your AI Journey</strong>
+</p>
 
-The main objective of this challenge is to assess your approach to **problem-solving, code quality, and how you leverage modern tools** — including AI.
+<p align="center">
+  <a href="./README.pt-BR.md">🇧🇷 Leia em Português</a>
+</p>
 
-We evaluate:
-
-- Your coding style and organization
-- Decision-making and trade-offs
-- Testing strategies
-- Documentation quality
-- How you use AI as a development tool
-
-> 🤖 **AI is welcome here.** We don't want to know *if* you used AI. We want to know *how* you used it.
-
----
-
-## Table of Contents
-
-- [The Challenge](#the-challenge)
-- [Business Rules](#business-rules)
-- [API Requirements](#api-requirements)
-- [Evaluation Criteria](#evaluation-criteria)
-- [AI Journey (Required)](#ai-journey-required)
-- [Submission](#submission)
-- [FAQ](#faq)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white" alt="C#">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/AI_Powered-FF6F61?style=for-the-badge&logo=openai&logoColor=white" alt="AI Powered">
+</p>
 
 ---
 
-## The Challenge
+## 🎯 What We're Looking For
 
-We receive customer data from partner companies in both **CSV** and **JSON** formats. Your task is to:
+The main objective of this challenge is to assess your approach to **problem-solving, code quality, and how you leverage AI tools** in your development workflow.
 
-1. **Load** data from external URLs at application startup
-2. **Transform** the data applying our business rules
-3. **Expose** a REST API to query the processed data
+<table>
+<tr>
+<td>✅</td><td>Your coding style and organization</td>
+</tr>
+<tr>
+<td>✅</td><td>Decision-making and trade-offs</td>
+</tr>
+<tr>
+<td>✅</td><td>Testing strategies</td>
+</tr>
+<tr>
+<td>✅</td><td>Documentation quality</td>
+</tr>
+<tr>
+<td>✅</td><td>How you collaborate with AI tools</td>
+</tr>
+</table>
 
-### Input Data
+> [!IMPORTANT]
+> 🤖 **AI collaboration is mandatory.** We don't want to know *if* you used AI. We want to know *how* you used it. Document your journey!
+
+---
+
+## 📑 Table of Contents
+
+- [🚀 The Challenge](#-the-challenge)
+- [📋 Business Rules](#-business-rules)
+- [🔌 API Requirements](#-api-requirements)
+- [⭐ Evaluation Criteria](#-evaluation-criteria)
+- [🤖 AI Journey (Required)](#-ai-journey-required)
+- [📤 Submission](#-submission)
+- [❓ FAQ](#-faq)
+
+---
+
+## 🚀 The Challenge
+
+We receive customer data from partner companies in both **CSV** and **JSON** formats. Your mission:
+
+```mermaid
+flowchart LR
+    subgraph INPUT["📥 Input"]
+        CSV[("CSV\n~1000 records")]
+        JSON[("JSON\n~1000 records")]
+    end
+
+    subgraph PROCESS["⚙️ Your API"]
+        LOAD["Load Data\n(HTTP at startup)"]
+        TRANSFORM["Apply Business\nRules"]
+        STORE["Store in\nMemory"]
+    end
+
+    subgraph OUTPUT["📤 Output"]
+        API["REST API\nGET /users"]
+    end
+
+    CSV --> LOAD
+    JSON --> LOAD
+    LOAD --> TRANSFORM
+    TRANSFORM --> STORE
+    STORE --> API
+```
+
+### 📥 Input Data
 
 | Format | URL | Records |
-|--------|-----|---------|
-| CSV | [input-backend.csv](https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.csv) | ~1000 |
-| JSON | [input-backend.json](https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.json) | ~1000 |
+|:------:|-----|:-------:|
+| 📄 CSV | [input-backend.csv](https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.csv) | ~1000 |
+| 📋 JSON | [input-backend.json](https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.json) | ~1000 |
 
-> ⚠️ Data must be loaded via HTTP request **at startup** and kept **in memory**. No database required.
+> [!WARNING]
+> Data must be loaded via HTTP request **at startup** and kept **in memory**. No database required.
 
 ---
 
-## Business Rules
+## 📋 Business Rules
 
-### 1. Customer Classification by Location
+### 1️⃣ Customer Classification by Location
 
-Based on coordinates, classify each customer:
+Based on coordinates, classify each customer into regions:
 
-| Type | Bounding Box |
-|------|--------------|
-| **SPECIAL** | minlon: -2.196998, minlat: -46.361899, maxlon: -15.411580, maxlat: -34.276938 |
-| **SPECIAL** | minlon: -19.766959, minlat: -52.997614, maxlon: -23.966413, maxlat: -44.428305 |
-| **NORMAL** | minlon: -26.155681, minlat: -54.777426, maxlon: -34.016466, maxlat: -46.603598 |
-| **LABORIOUS** | Anyone not matching the above |
+```mermaid
+flowchart TD
+    START["🧭 Customer\nCoordinates"] --> CHECK1{"In SPECIAL\nBox 1?"}
+    CHECK1 -->|Yes| SPECIAL["🌟 SPECIAL"]
+    CHECK1 -->|No| CHECK2{"In SPECIAL\nBox 2?"}
+    CHECK2 -->|Yes| SPECIAL
+    CHECK2 -->|No| CHECK3{"In NORMAL\nBox?"}
+    CHECK3 -->|Yes| NORMAL["📦 NORMAL"]
+    CHECK3 -->|No| LABORIOUS["⚙️ LABORIOUS"]
+```
 
-### 2. Data Transformations
+<details>
+<summary>📍 <b>Click to see Bounding Box coordinates</b></summary>
 
-| Field | Transformation |
-|-------|----------------|
-| `phone`, `cell` | Convert to [E.164](https://en.wikipedia.org/wiki/E.164) format. Example: `(86) 8370-9831` → `+558683709831` |
-| `gender` | `male` → `M`, `female` → `F` |
-| `dob.age`, `registered.age` | Remove these fields |
-| `nationality` | Add field with value `BR` |
-| `region` | Add based on state (Norte, Nordeste, Centro-Oeste, Sudeste, Sul) |
+| Type | MinLon | MinLat | MaxLon | MaxLat |
+|:----:|--------|--------|--------|--------|
+| 🌟 **SPECIAL** | -2.196998 | -46.361899 | -15.411580 | -34.276938 |
+| 🌟 **SPECIAL** | -19.766959 | -52.997614 | -23.966413 | -44.428305 |
+| 📦 **NORMAL** | -26.155681 | -54.777426 | -34.016466 | -46.603598 |
+| ⚙️ **LABORIOUS** | Anyone not matching the above |
 
-### 3. Output Contract
+</details>
+
+### 2️⃣ Data Transformations
+
+| Field | Transformation | Example |
+|-------|----------------|---------|
+| 📞 `phone`, `cell` | Convert to [E.164](https://en.wikipedia.org/wiki/E.164) | `(86) 8370-9831` → `+558683709831` |
+| 👤 `gender` | Abbreviate | `male` → `M`, `female` → `F` |
+| 🗑️ `dob.age`, `registered.age` | Remove these fields | — |
+| 🇧🇷 `nationality` | Add field | `BR` |
+| 🗺️ `region` | Add based on state | Norte, Nordeste, Centro-Oeste, Sudeste, Sul |
+
+### 3️⃣ Output Contract
+
+<details>
+<summary>📄 <b>Click to see the expected JSON structure</b></summary>
 
 ```json
 {
@@ -114,26 +182,28 @@ Based on coordinates, classify each customer:
 }
 ```
 
+</details>
+
 ---
 
-## API Requirements
+## 🔌 API Requirements
 
 ### Endpoint
 
-```
+```http
 GET /users
 ```
 
 ### Query Parameters
 
 | Parameter | Type | Description |
-|-----------|------|-------------|
-| `region` | string | Filter by region (norte, nordeste, centro-oeste, sudeste, sul) |
-| `type` | string | Filter by classification (special, normal, laborious) |
-| `pageNumber` | int | Page number (1-indexed) |
-| `pageSize` | int | Items per page |
+|-----------|:----:|-------------|
+| `region` | `string` | Filter by region: `norte`, `nordeste`, `centro-oeste`, `sudeste`, `sul` |
+| `type` | `string` | Filter by classification: `special`, `normal`, `laborious` |
+| `pageNumber` | `int` | Page number (1-indexed) |
+| `pageSize` | `int` | Items per page |
 
-### Response
+### Response Format
 
 ```json
 {
@@ -144,7 +214,7 @@ GET /users
 }
 ```
 
-### Validation
+### ✅ Validation
 
 Your API must pass our validation script:
 
@@ -153,102 +223,94 @@ Your API must pass our validation script:
 ```
 
 This checks:
-- Endpoint responding at `localhost:8080`
-- Pagination fields present
-- Total count of 2000 records
+- ✓ Endpoint responding at `localhost:8080`
+- ✓ Pagination fields present
+- ✓ Total count of 2000 records
 
 ---
 
-## Evaluation Criteria
+## ⭐ Evaluation Criteria
 
 We assess your submission across **7 competencies**. There are no "levels" to choose — just deliver your best work, and we'll evaluate where you stand.
 
-### 1. 🎯 Problem Solving
+<table>
+<tr>
+<td width="50%">
 
-| What we look for |
-|------------------|
-| Correct implementation of all business rules |
-| Edge cases handling (invalid data, missing fields, malformed input) |
-| Logical and efficient approach to data transformation |
+### 🎯 Problem Solving
+- Correct implementation of all business rules
+- Edge cases handling (invalid data, missing fields)
+- Logical and efficient data transformation
 
-### 2. 🏗️ Code Architecture
+### 🏗️ Code Architecture
+- Clear separation of concerns
+- Consistent project structure
+- Appropriate design patterns (when they add value)
+- Easy to navigate and understand
 
-| What we look for |
-|------------------|
-| Clear separation of concerns |
-| Consistent project structure |
-| Appropriate use of design patterns (when they add value, not for show) |
-| Code that's easy to navigate and understand |
+### ✨ Code Quality
+- Readability over cleverness
+- Meaningful naming conventions
+- Consistent style throughout
+- Proper error handling
 
-### 3. ✨ Code Quality
+### 🧪 Testing
+- Tests that document behavior
+- Coverage of critical paths
+- Tests that catch real bugs
+- Balance of unit and integration tests
 
-| What we look for |
-|------------------|
-| Readability over cleverness |
-| Meaningful naming conventions |
-| Consistent style throughout |
-| No unnecessary complexity |
-| Proper error handling |
+</td>
+<td width="50%">
 
-### 4. 🧪 Testing
+### 📚 Documentation
+- Clear README with setup instructions
+- API documentation (any format)
+- Comments where code isn't self-explanatory
+- Architecture decisions explained
 
-| What we look for |
-|------------------|
-| Tests that document behavior |
-| Coverage of critical paths |
-| Tests that would catch real bugs |
-| Balance between unit and integration tests |
+### 🚀 Production Readiness
+- Containerization (Docker)
+- Environment configuration
+- Health checks
+- Logging strategy
+- CI/CD awareness
 
-### 5. 📚 Documentation
+### 🤖 AI Collaboration
+- Transparency in AI usage
+- Critical thinking about AI-generated code
+- Iteration and refinement over copy-paste
+- Understanding of what the AI produced
 
-| What we look for |
-|------------------|
-| Clear README with setup instructions |
-| API documentation (any format) |
-| Comments where code isn't self-explanatory |
-| Architecture decisions explained (when relevant) |
-
-### 6. 🚀 Production Readiness
-
-| What we look for |
-|------------------|
-| Containerization (Docker) |
-| Environment configuration |
-| Health checks |
-| Logging strategy |
-| CI/CD awareness |
-
-### 7. 🤖 AI Collaboration
-
-| What we look for |
-|------------------|
-| Transparency in AI usage |
-| Critical thinking about AI-generated code |
-| Iteration and refinement over copy-paste |
-| Understanding of what the AI produced |
+</td>
+</tr>
+</table>
 
 ---
 
-## AI Journey (Required)
+## 🤖 AI Journey (Required)
 
-Create an `/ai-journey` folder in your repository documenting how you used AI tools.
+> [!CAUTION]
+> This section is **mandatory**. Submissions without AI documentation will not be evaluated.
 
-### Required Files
+Create an `/ai-journey` folder in your repository documenting how you collaborated with AI tools.
+
+### 📁 Required Structure
 
 ```
 📁 ai-journey/
-├── README.md          # Summary of your AI usage
-├── prompts.md         # Key prompts you used
-└── learnings.md       # What you learned in the process
+├── 📄 README.md          # Summary of your AI usage
+├── 📄 prompts.md         # Key prompts you used
+└── 📄 learnings.md       # What you learned in the process
 ```
 
-### What to Document
+### 📝 What to Document
 
-**prompts.md** — Don't document everything, just the interesting parts:
+#### `prompts.md` — The interesting parts, not everything
 
 ```markdown
-## Prompt: Phone number regex
-**Tool:** ChatGPT-4
+## 🔧 Prompt: Phone number regex
+**Tool:** ChatGPT-4 / Claude / Copilot
 
 **What I asked:**
 "Create a regex to convert Brazilian phone numbers to E.164 format"
@@ -260,109 +322,121 @@ Initial regex didn't handle 9-digit mobile numbers. I had to...
 [your code]
 ```
 
-**learnings.md** — Reflect on the experience:
+#### `learnings.md` — Reflect on the experience
 
 ```markdown
-## What worked well
+## ✅ What worked well
 - AI was great for boilerplate code
-- Helped me explore libraries I wasn't familiar with
+- Helped me explore unfamiliar libraries
 
-## What didn't work
+## ❌ What didn't work
 - Initial architecture suggestion was over-engineered
-- Had to simplify after understanding the actual requirements
+- Had to simplify after understanding actual requirements
 
-## What I'd do differently
+## 🔄 What I'd do differently
 - Start with clearer requirements in prompts
 - Ask for simpler solutions first
 ```
 
-### If You Don't Use AI
-
-That's fine! Document your process anyway:
-- What resources did you consult?
-- How did you approach problems?
-- What was your decision-making process?
-
 ---
 
-## Submission
+## 📤 Submission
 
-### Languages
+### 💻 Languages
 
-**Python** or **C#** — choose the one you're most comfortable with.
+<p>
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+<b>or</b>
+<img src="https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white" alt="C#">
+</p>
 
-### Repository Structure
+Choose the one you're most comfortable with.
+
+### 📁 Repository Structure
 
 ```
 📁 your-repo/
-├── src/                  # Source code
-├── tests/                # Tests
-├── ai-journey/           # AI documentation (required)
-├── docker-compose.yml    # If applicable
-└── README.md             # Setup instructions
+├── 📂 src/                  # Source code
+├── 📂 tests/                # Tests
+├── 📂 ai-journey/           # AI documentation (required!)
+│   ├── 📄 README.md
+│   ├── 📄 prompts.md
+│   └── 📄 learnings.md
+├── 🐳 docker-compose.yml    # If applicable
+└── 📄 README.md             # Setup instructions
 ```
 
-### How to Submit
+### 📮 How to Submit
 
-1. Create a **public** GitHub repository
-2. Open an **Issue** in this repository with:
-   - Title: `[Backend] Your Name`
-   - Link to your repository
-   - Brief description of your approach
-   - Anything you'd like us to know
+```mermaid
+flowchart LR
+    A["1️⃣ Create public\nGitHub repo"] --> B["2️⃣ Open Issue\nin this repo"]
+    B --> C["3️⃣ Wait for\nour feedback"]
+```
 
-### Timeline
+**Issue format:**
+- **Title:** `[Backend] Your Name`
+- **Content:** Link to your repository + brief description
 
-- **Recommended:** 7 days
-- **Need more time?** Just let us know in the issue
+### ⏰ Timeline
+
+| Recommended | Need more time? |
+|:-----------:|:---------------:|
+| 7 days | Just let us know in the issue! |
 
 ---
 
-## FAQ
+## ❓ FAQ
 
 <details>
-<summary><b>What languages can I use?</b></summary>
+<summary><b>🔤 What languages can I use?</b></summary>
 
-Python or C#. Choose the one you're most comfortable with.
+**Python** or **C#**. Choose the one you're most comfortable with.
 </details>
 
 <details>
-<summary><b>Are there open positions?</b></summary>
+<summary><b>💼 Are there open positions?</b></summary>
 
 Not always, but we maintain a talent pool. Great submissions stay on our radar for future opportunities.
 </details>
 
 <details>
-<summary><b>What if I can only complete part of the challenge?</b></summary>
+<summary><b>⚠️ What if I can only complete part of the challenge?</b></summary>
 
 Submit what you have! Partial submissions with quality code tell us more than complete submissions with poor code. Just document what's missing and why.
 </details>
 
 <details>
-<summary><b>Should I include extra features?</b></summary>
+<summary><b>➕ Should I include extra features?</b></summary>
 
-Only if they add clear value and don't compromise the core requirements. We prefer well-executed basics over half-finished extras.
+Only if they add clear value and don't compromise core requirements. We prefer well-executed basics over half-finished extras.
 </details>
 
 <details>
-<summary><b>How will I know my seniority level?</b></summary>
+<summary><b>📊 How will I know my seniority level?</b></summary>
 
 We don't ask you to self-declare a level. We evaluate your submission across all criteria and determine fit based on our internal standards.
 </details>
 
 ---
 
-## Other Challenges
+## 🔗 Other Challenges
 
-If you're applying for a front-end position, check out our [frontend-challenge](https://github.com/juntossomosmais/frontend-challenge).
+| Position | Repository |
+|----------|------------|
+| 🎨 Frontend | [frontend-challenge](https://github.com/juntossomosmais/frontend-challenge) |
 
 ---
 
-## Questions?
+## 💬 Questions?
 
-Open an [issue](../../issues) or reach out to **vagas-dev@juntossomosmais.com.br**.
+<p>
+  <a href="../../issues">📋 Open an Issue</a>
+  &nbsp;•&nbsp;
+  <a href="mailto:vagas-dev@juntossomosmais.com.br">✉️ vagas-dev@juntossomosmais.com.br</a>
+</p>
 
-Before asking, please check if your question was already answered in [previous issues](../../issues?q=is%3Aissue).
+> Before asking, check if your question was already answered in [previous issues](../../issues?q=is%3Aissue).
 
 ---
 
